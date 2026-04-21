@@ -1,0 +1,12 @@
+{
+  "name": "x4-flasher",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-C3",
+      "parts": [
+        { "path": "https://gitee.com/api/v5/repos/allocated/crosspoint_chinesetype/releases/latest/download/firmware.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
