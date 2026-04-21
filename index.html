@@ -119,8 +119,11 @@
                 <li>选择端口--COM5或者COM7</li>
             </ol></div>
 
-            <button id="install-latest" style="width:100%;background:linear-gradient(180deg,#e8443a,#c8352c);border:1px solid #a02a22;border-radius:6px;padding:14px 20px;font-family:inherit;font-size:14px;font-weight:600;color:white;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.15);margin:16px 0;">点击此处安装</button>
-            <div id="install-unsupported" style="display:none;color:#c00;font-size:12px;text-align:center;margin-top:8px;">你的浏览器不支持 Web Serial</div>
+            <esp-web-install-button manifest="manifest.json">
+                <button slot="activate">点击此处安装</button>
+                <span slot="unsupported">你的浏览器不支持 Web Serial</span>
+                <span slot="not-allowed">未获得 Web Serial 权限，无法使用</span>
+            </esp-web-install-button>
 
             <div class="note">
                 <strong>注意：</strong> 此操作会替换你当前的固件。
@@ -156,37 +159,7 @@
     <footer>Crosspoint_chinesetype · 还原阅读本色</footer>
 
     <script>
-        if (!('serial' in navigator)) {
-            document.getElementById('browserWarning').style.display = 'block';
-            document.getElementById('install-latest').style.display = 'none';
-            document.getElementById('install-unsupported').style.display = 'block';
-        } else {
-            document.getElementById('install-latest').onclick = async () => {
-                // 获取 GitHub 最新固件
-                const resp = await fetch('https://api.github.com/repos/daveallie/crosspoint-reader/releases/latest');
-                const releaseData = await resp.json();
-                const firmwareAsset = releaseData.assets.find(asset => asset.name.endsWith('firmware.bin'));
-                if (!firmwareAsset) {
-                    alert('未找到最新固件');
-                    return;
-                }
-                const manifest = {
-                    name: "x4-flasher",
-                    builds: [{
-                        chipFamily: "ESP32-C3",
-                        parts: [
-                            { path: firmwareAsset.browser_download_url, offset: 0 }
-                        ]
-                    }]
-                };
-                // 动态加载 esp-web-tools
-                if (!window.ESPWebTools) {
-                    await import('https://unpkg.com/esp-web-tools@10/dist/web/installer.js?module');
-                }
-                const installer = new window.ESPWebTools.WebSerialInstaller(manifest);
-                installer.open();
-            };
-        }
+    if (!('serial' in navigator)) document.getElementById('browserWarning').style.display = 'block';
     </script>
 </body>
 </html>
