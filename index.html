@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>简易x4刷写器</title>
+    
+    <!-- 1. 引入 esp-web-tools (用于界面按钮) -->
     <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+    
+    <!-- 2. 引入 esptool-js (用于底层备份操作) -->
+    <!-- 注意：路径已修正，指向正确的 .mjs 文件 -->
+    <script type="module">
+        import { run } from 'https://cdn.jsdelivr.net/npm/esptool-js@0.4.8/dist/esptool-js.mjs';
+        // 将 run 方法挂载到 window 上，以便下面的脚本能访问到
+        window.espWebToolsRun = run;
+    </script>
+
     <style>
         :root {
             --white: #ffffff;
@@ -31,7 +42,7 @@
             margin-bottom: 24px;
             padding-top: 20px;
         }
-        .header canvas { display: block; margin: 0 auto 16px; }
+        .header img { display: block; margin: 0 auto 16px; }
         .header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 2px; }
         .header h1 span { color: var(--red); }
         .header .tagline { font-size: 11px; color: var(--gray-dark); letter-spacing: 2px; }
@@ -95,7 +106,7 @@
 </head>
 <body>
     <div class="header">
-        <img src="logo.png" width="240" height="240" alt="logo" style="display:block;margin:0 auto 16px;" />
+        <img src="logo.png" width="240" height="240" alt="logo" />
         <h1>Crosspoint <span>_Chinesetype</span> </h1>
         <div class="tagline">allocate-x4刷写器(基于sumi page修改适配)</div>
         <div class="tagline">开源库地址：<a href="https://github.com/icannotttt/crosspoint-chinesetype" target="_blank" rel="noopener">github库</a>  <a href="https://gitee.com/allocated/crosspoint_chinesetype" target="_blank" rel="noopener">gitee库</a></div>
@@ -119,6 +130,16 @@
                 <li>选择端口--COM5或者COM7</li>
             </ol></div>
 
+            <!-- 备份按钮区域
+            <div style="margin: 20px 0; padding: 16px; background: #f5f5f5; border-radius: 8px;">
+                <h3 style="margin:0 0 10px 0;">全闪存保存</h3>
+                <button id="backupBtn" style="padding: 10px 20px; background: #d32f2f; color: white; border:none; border-radius:6px; cursor:pointer;">
+                    开始备份 16MB
+                </button>
+                <div id="status" style="margin-top:8px; font-size:14px;"></div>
+            </div> -->
+
+            <!-- 原有刷写按钮 -->
             <esp-web-install-button manifest="manifest.json">
                 <button slot="activate">点击此处安装</button>
                 <span slot="unsupported">你的浏览器不支持 Web Serial</span>
@@ -126,40 +147,13 @@
             </esp-web-install-button>
 
             <div class="note">
-                <strong>注意：</strong> 此操作会替换你当前的固件。
+                <strong>注意：</strong> 刷写前请备份
             </div>
         </div>
     </div>
 
-    <!-- <div class="features-bar">
-        <div class="feat-card"><div class="icon">🎮</div><div class="label">Full GB CPU</div></div>
-        <div class="feat-card"><div class="icon">💾</div><div class="label">Save States</div></div>
-        <div class="feat-card"><div class="icon">😴</div><div class="label">Deep Sleep</div></div>
-    </div> -->
 
-    <!-- <div class="window" style="margin-bottom: 20px;">
-        <div class="title-bar">
-            <div class="window-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
-            <h2>Controls</h2>
-            <div class="spacer"></div>
-        </div>
-        <div class="window-body">
-            <div class="controls-grid">
-                <span class="ctrl-key">D-Pad</span><span class="ctrl-val">Movement</span>
-                <span class="ctrl-key">A (Confirm)</span><span class="ctrl-val">Select / interact</span>
-                <span class="ctrl-key">B (Back)</span><span class="ctrl-val">Cancel / run</span>
-                <span class="ctrl-key">PWR tap</span><span class="ctrl-val">Full screen refresh</span>
-                <span class="ctrl-key">PWR hold ~2s</span><span class="ctrl-val">Save + open in-game menu</span>
-                <span class="ctrl-key">PWR hold ~3s</span><span class="ctrl-val">Save + deep sleep</span>
-                <span class="ctrl-key">PWR (asleep)</span><span class="ctrl-val">Wake up</span>
-            </div>
-        </div>
-    </div> -->
 
     <footer>Crosspoint_chinesetype · 还原阅读本色</footer>
-
-    <script>
-    if (!('serial' in navigator)) document.getElementById('browserWarning').style.display = 'block';
-    </script>
 </body>
 </html>
